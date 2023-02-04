@@ -1,0 +1,59 @@
+Arguments: 
+  /usr/local/bin/node /home/pouria/.yarn/bin/yarn.js
+
+PATH: 
+  /home/pouria/.yarn/bin:/home/pouria/.config/yarn/global/node_modules/.bin:/home/pouria/.yarn/bin:/home/pouria/.config/yarn/global/node_modules/.bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  16.14.0
+
+Platform: 
+  linux x64
+
+Trace: 
+  SyntaxError: /media/pouria/Projects/timeline/timeline-backend/package.json: Unexpected token } in JSON at position 490
+      at JSON.parse (<anonymous>)
+      at /home/pouria/.yarn/lib/cli.js:1629:59
+      at Generator.next (<anonymous>)
+      at step (/home/pouria/.yarn/lib/cli.js:310:30)
+      at /home/pouria/.yarn/lib/cli.js:321:13
+
+npm manifest: 
+  {
+    "name": "timeline-backend",
+    "version": "1.0.0",
+    "description": "",
+    "main": "dist/app.js",
+    "scripts": {
+      "dev": "tsc-watch --onSuccess \"nodemon dist/app.js\"",
+      "start": "node dist/app.js"
+    },
+    "author": "Pouria Rezaei",
+    "license": "ISC",
+    "dependencies": {
+      "body-parser": "^1.19.2",
+      "connect-mongodb-session": "^3.1.1",
+      "dotenv": "^16.0.0",
+      "express": "^4.17.2",
+      "express-session": "^1.17.2",
+      "mongodb": "^4.4.1",
+      "mongoose": "^6.2.4",
+    },
+    "devDependencies": {
+      "@types/connect-mongodb-session": "^2.4.2",
+      "@types/express": "^4.17.13",
+      "@types/node": "^17.0.21",
+      "nodemon": "^2.0.15",
+      "tsc-watch": "^4.6.0",
+      "typescript": "^4.6.2"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
