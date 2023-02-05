@@ -3,6 +3,7 @@ import * as userControllers from "../controllers/user.controller";
 
 const userRoutes = Router();
 
-userRoutes.get("/", userControllers.getIndex);
+userRoutes.get("/timelines", userControllers.getTimelines);
+userRoutes.post("/event", userControllers.createEvent);
 
 export default userRoutes;

@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import path from "path";
 import express from "express";
-import bodyParser from "body-parser";
+import cors from "cors";
 import mongoose from "mongoose";
 import userRoutes from "./routes/user";
 
@@ -9,10 +9,12 @@ dotenv.config();
 const app = express();
 const URI = `mongodb+srv://PouriaRezaei:${process.env.MONGODB_PASS}@cluster0.uxmyd.mongodb.net/timeline?retryWrites=true&w=majority`;
 
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.json());
 app.use(express.static(path.join(__dirname, "..", "public")));
+app.use(cors({ origin: "*", optionsSuccessStatus: 200 }));
 
 app.use((req, res, next) => {
+   console.log("+++++++++++++++++++++++ Body: ", req.body);
    next();
 });
 

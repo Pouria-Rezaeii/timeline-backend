@@ -26,5 +26,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const userControllers = __importStar(require("../controllers/user.controller"));
 const userRoutes = (0, express_1.Router)();
-userRoutes.get("/", userControllers.getIndex);
+userRoutes.get("/timelines", userControllers.getTimelines);
+userRoutes.post("/event", userControllers.createEvent);
 exports.default = userRoutes;
