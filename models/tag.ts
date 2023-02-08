@@ -7,6 +7,10 @@ const Tag = model(
          type: Schema.Types.String,
          required: true,
       },
+      color: {
+         type: Schema.Types.String,
+         required: true,
+      },
    })
 );
 

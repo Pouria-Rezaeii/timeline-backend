@@ -1,6 +1,8 @@
 import { RequestHandler } from "express";
 import { Event } from "../models/event";
 import { isLocalDateTime, isLocalDateValid } from "../services/util";
+import { Tag } from "../models/tag";
+import { hexCodeArray } from "../services/hexCodeArray";
 
 export const getEvents: RequestHandler = async (req, res) => {
    await Event.aggregate([
@@ -20,6 +22,7 @@ export const getEvents: RequestHandler = async (req, res) => {
             _id: "$localDate",
             events: {
                $push: {
+                  _id: "$id",
                   title: "$title",
                   localTime: "$localTime",
                   tags: "$tags",
@@ -56,6 +59,39 @@ export const createEvent: RequestHandler = async (req, res) => {
 
    try {
       const event = await newEvent.save();
+      res.status(201).json(event);
+   } catch (err) {
+      res.status(400).send(err);
+   }
+};
+
+export const getTags: RequestHandler = async (req, res) => {
+   const tags = await Tag.find();
+   res.json(tags);
+};
+
+export const createTag: RequestHandler = async (req, res) => {
+   const { name, color } = req.body;
+
+   const colorIsValid =
+      color.length === 6 &&
+      color.split("").every((letter: string) => hexCodeArray.includes(letter));
+
+   if (!colorIsValid) {
+      res.status(400).send({
+         message: "Color code is not valid",
+         body: { color },
+      });
+      return;
+   }
+
+   const newTag = new Tag({
+      name,
+      color,
+   });
+
+   try {
+      const event = await newTag.save();
       res.status(201).json(event);
    } catch (err) {
       res.status(400).send(err);
