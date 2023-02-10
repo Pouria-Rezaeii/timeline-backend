@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import {Schema, model} from "mongoose";
 
 const Event = model(
    "Event",
@@ -27,4 +27,4 @@ const Event = model(
    })
 );
 
-export { Event };
+export {Event};

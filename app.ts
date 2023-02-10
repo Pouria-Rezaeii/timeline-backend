@@ -3,7 +3,8 @@ import path from "path";
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
-import userRoutes from "./routes/user";
+import eventRoutes from "./routes/event.route";
+import tagRoutes from "./routes/tag.route";
 
 dotenv.config();
 const app = express();
@@ -11,14 +12,15 @@ const URI = `mongodb+srv://PouriaRezaei:${process.env.MONGODB_PASS}@cluster0.uxm
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "..", "public")));
-app.use(cors({ origin: "*", optionsSuccessStatus: 200 }));
+app.use(cors({origin: "*", optionsSuccessStatus: 200}));
 
 app.use((req, res, next) => {
-   console.log("+++++++++++++++++++++++ Body: ", req.body);
+   // console.log("+++++++++++++++++++++++ Body: ", req.body);
    next();
 });
 
-app.use(userRoutes);
+app.use(eventRoutes);
+app.use(tagRoutes);
 
 mongoose
    .connect(URI)

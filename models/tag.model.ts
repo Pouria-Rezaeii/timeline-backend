@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import {Schema, model} from "mongoose";
 
 const Tag = model(
    "Tag",
@@ -14,4 +14,4 @@ const Tag = model(
    })
 );
 
-export { Tag };
+export {Tag};
