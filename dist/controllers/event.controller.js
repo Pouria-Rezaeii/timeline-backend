@@ -20,7 +20,7 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createEvent = exports.getEventsByDays = void 0;
+exports.deleteEvent = exports.createEvent = exports.getEventsByDays = void 0;
 const event_model_1 = require("../models/event.model");
 const util_1 = require("../services/util");
 const getEventsByDays = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -50,10 +50,11 @@ const getEventsByDays = (req, res) => __awaiter(void 0, void 0, void 0, function
                 _id: "$localDate",
                 events: {
                     $push: {
-                        _id: "$id",
+                        _id: "$_id",
                         title: "$title",
                         localTime: "$localTime",
                         tags: "$tags",
+                        description: "$description",
                     },
                 },
             },
@@ -110,3 +111,8 @@ const createEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.createEvent = createEvent;
+const deleteEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const event = yield event_model_1.Event.findByIdAndDelete(req.params.id);
+    res.json(event);
+});
+exports.deleteEvent = deleteEvent;

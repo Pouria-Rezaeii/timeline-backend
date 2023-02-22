@@ -28,4 +28,5 @@ const eventControllers = __importStar(require("../controllers/event.controller")
 const eventRoutes = (0, express_1.Router)();
 eventRoutes.get("/events-by-days", eventControllers.getEventsByDays);
 eventRoutes.post("/events", eventControllers.createEvent);
+eventRoutes.delete("/events/:id", eventControllers.deleteEvent);
 exports.default = eventRoutes;

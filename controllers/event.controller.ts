@@ -31,10 +31,11 @@ export const getEventsByDays: RequestHandler = async (req, res) => {
             _id: "$localDate",
             events: {
                $push: {
-                  _id: "$id",
+                  _id: "$_id",
                   title: "$title",
                   localTime: "$localTime",
                   tags: "$tags",
+                  description: "$description",
                },
             },
          },
@@ -95,4 +96,9 @@ export const createEvent: RequestHandler = async (req, res) => {
    } catch (err) {
       res.status(400).send(err);
    }
+};
+
+export const deleteEvent: RequestHandler = async (req, res) => {
+   const event = await Event.findByIdAndDelete(req.params.id);
+   res.json(event);
 };
