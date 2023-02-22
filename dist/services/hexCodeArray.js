@@ -18,4 +18,10 @@ exports.hexCodeArray = [
     "d",
     "e",
     "f",
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
 ];
