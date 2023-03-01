@@ -24,22 +24,25 @@ exports.deleteEvent = exports.createEvent = exports.getEventsByDays = void 0;
 const event_model_1 = require("../models/event.model");
 const util_1 = require("../services/util");
 const getEventsByDays = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const from = (req.query["from"] || "");
-    const to = (req.query["to"] || "");
-    if (!(0, util_1.isLocalDateValid)(from) || !(0, util_1.isLocalDateValid)(to)) {
+    const { query } = req;
+    const from = (query["from"] || "");
+    const to = (query["to"] || "");
+    const pageSize = Number(query["page-size"] || 5);
+    const page = Number(query.page || 1);
+    if ((from && !(0, util_1.isLocalDateValid)(from)) || (to && !(0, util_1.isLocalDateValid)(to))) {
         res.status(400).send({
-            message: "date-from or date-to is not provided or they are not valid",
+            message: "date-from or date-to is not valid",
             body: { from, to },
         });
         return;
     }
-    yield event_model_1.Event.aggregate([
+    event_model_1.Event.aggregate([
         {
             $match: {
                 $expr: {
                     $and: [
-                        { $gte: [{ $toInt: "$localDate" }, Number(from)] },
-                        { $lte: [{ $toInt: "$localDate" }, Number(to)] },
+                        { $gte: [{ $toInt: "$localDate" }, Number(from || 0)] },
+                        { $lte: [{ $toInt: "$localDate" }, Number(to || 99999999)] },
                     ],
                 },
             },
@@ -59,10 +62,12 @@ const getEventsByDays = (req, res) => __awaiter(void 0, void 0, void 0, function
                 },
             },
         },
+        { $sort: { _id: -1 } },
+        { $skip: pageSize * (page - 1) },
+        { $limit: pageSize },
         { $project: { _id: 0, date: "$_id", events: 1 } },
-        { $sort: { date: -1 } },
     ]).exec(function (err, result) {
-        res.json(result);
+        res.json({ result, page });
     });
 });
 exports.getEventsByDays = getEventsByDays;
@@ -83,10 +88,8 @@ const createEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
     const eventsSortedByDate = yield event_model_1.Event.find().sort({ localDate: -1 }).limit(1);
     const latestEvent = eventsSortedByDate[0];
-    if (latestEvent &&
-        +latestEvent.localDate === +localDate - 1 &&
-        latestEvent.localTime !== "2359") {
-        // means: it's not the first event of database and this is the first event of the day && last day events are not completed yet
+    if (latestEvent && latestEvent.localTime !== "2359") {
+        // means: it's not the first event of the database && last day events are not completed yet
         yield new event_model_1.Event({
             title: body.title,
             localDate: +localDate - 1,
