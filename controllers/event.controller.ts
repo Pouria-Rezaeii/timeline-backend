@@ -3,24 +3,27 @@ import {Event} from "../models/event.model";
 import {isLocalTimeValid, isLocalDateValid} from "../services/util";
 
 export const getEventsByDays: RequestHandler = async (req, res) => {
-   const from = (req.query["from"] || "") as string;
-   const to = (req.query["to"] || "") as string;
+   const {query} = req;
+   const from = (query["from"] || "") as string;
+   const to = (query["to"] || "") as string;
+   const pageSize = Number(query["page-size"] || 5);
+   const page = Number(query.page || 1);
 
-   if (!isLocalDateValid(from) || !isLocalDateValid(to)) {
+   if ((from && !isLocalDateValid(from)) || (to && !isLocalDateValid(to))) {
       res.status(400).send({
-         message: "date-from or date-to is not provided or they are not valid",
+         message: "date-from or date-to is not valid",
          body: {from, to},
       });
       return;
    }
 
-   await Event.aggregate([
+   Event.aggregate([
       {
          $match: {
             $expr: {
                $and: [
-                  {$gte: [{$toInt: "$localDate"}, Number(from)]},
-                  {$lte: [{$toInt: "$localDate"}, Number(to)]},
+                  {$gte: [{$toInt: "$localDate"}, Number(from || 0)]},
+                  {$lte: [{$toInt: "$localDate"}, Number(to || 99999999)]},
                ],
             },
          },
@@ -40,10 +43,12 @@ export const getEventsByDays: RequestHandler = async (req, res) => {
             },
          },
       },
+      {$sort: {_id: -1}},
+      {$skip: pageSize * (page - 1)},
+      {$limit: Math.min(pageSize, 10)},
       {$project: {_id: 0, date: "$_id", events: 1}},
-      {$sort: {date: -1}},
    ]).exec(function (err, result) {
-      res.json(result);
+      res.json({result, page});
    });
 };
 
@@ -67,12 +72,8 @@ export const createEvent: RequestHandler = async (req, res) => {
 
    const eventsSortedByDate = await Event.find().sort({localDate: -1}).limit(1);
    const latestEvent = eventsSortedByDate[0];
-   if (
-      latestEvent &&
-      +latestEvent.localDate === +localDate - 1 &&
-      latestEvent.localTime !== "2359"
-   ) {
-      // means: it's not the first event of database and this is the first event of the day && last day events are not completed yet
+   if (latestEvent && latestEvent.localTime !== "2359") {
+      // means: it's not the first event of the database && last day events are not completed yet
       await new Event({
          title: body.title,
          localDate: +localDate - 1,
